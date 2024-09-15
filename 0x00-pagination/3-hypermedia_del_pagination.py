@@ -38,7 +38,8 @@ class Server:
             }
         return self.__indexed_dataset
 
-    def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
+    def get_hyper_index(self, index: int | None = None,
+                        page_size: int = 10) -> Dict:
         """
         Get the pagination index, handling cases
         where rows have been deleted.
