@@ -26,7 +26,7 @@ class LIFOCache(BaseCaching):
             item: item to add to the cache
         """
         discard_key = ""
-        if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
+        if len(self.cache_data) >= self.MAX_ITEMS:
             discard_key = list(self.cache_data.keys())[-1]
             del self.cache_data[discard_key]
             print("DISCARD:", discard_key)
