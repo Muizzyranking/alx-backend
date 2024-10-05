@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 This module contains flask app running with babel for
 handling translations and timezone settings.
@@ -12,11 +12,11 @@ app = Flask(__name__)
 
 class Config:
     """Config class for setting"""
-    LANGUAUGES = ['en', 'fr']
+    LANGUAGES = ["en", "fr"]
 
-    BABEL_DEFAULT_LOCALE = 'en'
+    BABEL_DEFAULT_LOCALE = "en"
 
-    BABEL_DEFAULT_TIMEZONE = 'UTC'
+    BABEL_DEFAULT_TIMEZONE = "UTC"
 
 
 app.config.from_object(Config)
