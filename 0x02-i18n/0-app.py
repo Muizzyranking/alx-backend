@@ -9,10 +9,10 @@ from flask import Flask, render_template
 app = Flask(__name__)
 
 
-@app.route('/')
-def root():
+@app.route('/', methods=['GET'], strict_slashes=False)
+def index():
     """
-    Home page.
+    This serves as the home page of the flask app.
     """
     return render_template('0-index.html')
 
