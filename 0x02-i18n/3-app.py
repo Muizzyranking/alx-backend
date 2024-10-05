@@ -1,58 +1,60 @@
 #!/usr/bin/env python3
 """
-This module contains a Flask application with Babel integration
-for handling translations and timezone settings.
+This module contains a Flask application with Babel integration,
+including localization and translation of text using message IDs.
 """
 
+# import babel
 from flask import Flask, render_template, request
 from flask_babel import Babel, gettext
 
+# Initialize the Flask application
 app = Flask(__name__)
 
 
+# Configuration class for Flask and Babel settings
 class Config:
     """
-    Config class used to configure available
-    languages, default locale, and timezone.
+    Configuration class that defines supported languages,
+    default locale, and timezone for the application.
     """
-    LANGUAGES = ["en", "fr"]
-
-    BABEL_DEFAULT_LOCALE = "en"
-
-    BABEL_DEFAULT_TIMEZONE = "UTC"
+    LANGUAGES = ["en", "fr"]  # Supported languages
+    BABEL_DEFAULT_LOCALE = "en"  # Default language/locale
+    BABEL_DEFAULT_TIMEZONE = "UTC"  # Default timezone
 
 
+# Apply the configuration to the app
 app.config.from_object(Config)
 
+# Initialize Babel with the Flask app
 babel = Babel(app)
 
 
 @babel.localeselector
 def get_locale():
     """
-    Determine the best match for supported languages from the request.
-
-    Uses the request's 'Accept-Language' headers to select
-    the best match from the supported languages.
+    Selects the best match language from the client's request.
 
     Returns:
-        The best matching language as a string.
+        str: The best matching language from supported languages.
     """
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 
-@app.route('/', methods=['GET'], strict_slashes=False)
+@app.route('/')
 def index():
     """
-    The index function serves the homepage of the application.
-    It renders an HTML template called '2-index.html'.
+    The main route that renders the home page template with translated text.
 
     Returns:
-        The rendered HTML template as a string.
+        str: Rendered HTML template for the home page.
     """
-    return render_template("3-index.html", title=gettext("home_title"),
+    # Render the template with translated title and header
+    return render_template('3-index.html',
+                           title=gettext("home_title"),
                            header=gettext("home_header"))
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Run the application
+    app.run()
