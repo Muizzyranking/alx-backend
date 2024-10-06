@@ -1,60 +1,37 @@
 #!/usr/bin/env python3
+"""A Basic Flask app with internationalization support.
 """
-This module contains a Flask application with Babel integration,
-including localization and translation of text using message IDs.
-"""
-
-# import babel
+from flask_babel import Babel
 from flask import Flask, render_template, request
-from flask_babel import Babel, gettext
-
-# Initialize the Flask application
-app = Flask(__name__)
 
 
-# Configuration class for Flask and Babel settings
 class Config:
+    """Represents a Flask Babel configuration.
     """
-    Configuration class that defines supported languages,
-    default locale, and timezone for the application.
-    """
-    LANGUAGES = ["en", "fr"]  # Supported languages
-    BABEL_DEFAULT_LOCALE = "en"  # Default language/locale
-    BABEL_DEFAULT_TIMEZONE = "UTC"  # Default timezone
+    LANGUAGES = ["en", "fr"]
+    BABEL_DEFAULT_LOCALE = "en"
+    BABEL_DEFAULT_TIMEZONE = "UTC"
 
 
-# Apply the configuration to the app
+app = Flask(__name__)
 app.config.from_object(Config)
-
-# Initialize Babel with the Flask app
+app.url_map.strict_slashes = False
 babel = Babel(app)
 
 
 @babel.localeselector
-def get_locale():
+def get_locale() -> str:
+    """Retrieves the locale for a web page.
     """
-    Selects the best match language from the client's request.
-
-    Returns:
-        str: The best matching language from supported languages.
-    """
-    return request.accept_languages.best_match(app.config['LANGUAGES'])
+    return request.accept_languages.best_match(app.config["LANGUAGES"])
 
 
 @app.route('/')
-def index():
+def get_index() -> str:
+    """The home/index page.
     """
-    The main route that renders the home page template with translated text.
-
-    Returns:
-        str: Rendered HTML template for the home page.
-    """
-    # Render the template with translated title and header
-    return render_template('3-index.html',
-                           title=gettext("home_title"),
-                           header=gettext("home_header"))
+    return render_template('3-index.html')
 
 
 if __name__ == '__main__':
-    # Run the application
-    app.run()
+    app.run(host='0.0.0.0', port=5000)

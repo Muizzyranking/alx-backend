@@ -1,69 +1,45 @@
 #!/usr/bin/env python3
+"""A Basic Flask app with internationalization support.
 """
-Flask application with Babel integration, supporting
-forced locale selection via URL parameter.
-"""
-
+from flask_babel import Babel
 from flask import Flask, render_template, request
-from flask_babel import Babel, gettext
-
-# Initialize the Flask application
-app = Flask(__name__)
 
 
-# Configuration class for Flask and Babel settings
 class Config:
+    """Represents a Flask Babel configuration.
     """
-    Configuration class that defines supported languages,
-    default locale, and timezone for the application.
-    """
-    LANGUAGES = ["en", "fr"]  # Supported languages
-    BABEL_DEFAULT_LOCALE = "en"  # Default language/locale
-    BABEL_DEFAULT_TIMEZONE = "UTC"  # Default timezone
+    LANGUAGES = ["en", "fr"]
+    BABEL_DEFAULT_LOCALE = "en"
+    BABEL_DEFAULT_TIMEZONE = "UTC"
 
 
-# Apply the configuration to the app
+app = Flask(__name__)
 app.config.from_object(Config)
-
-# Initialize Babel with the Flask app
+app.url_map.strict_slashes = False
 babel = Babel(app)
 
 
 @babel.localeselector
-def get_locale():
+def get_locale() -> str:
+    """Retrieves the locale for a web page.
     """
-    Selects the best match language from
-    the client's request or URL parameter.
-
-    Returns:
-        str: The selected language/locale.
-    """
-    # Check if 'locale' parameter is in the URL
-    # and if it matches supported languages
-    locale = request.args.get('locale')
-    if locale in app.config['LANGUAGES']:
-        print(locale)
-        return locale
-
-    # Default behavior: return the best match based on request headers
-    return request.accept_languages.best_match(app.config['LANGUAGES'])
+    queries = request.query_string.decode('utf-8').split('&')
+    query_table = dict(map(
+        lambda x: (x if '=' in x else '{}='.format(x)).split('='),
+        queries,
+    ))
+    if 'locale' in query_table:
+        if query_table['locale'] in app.config["LANGUAGES"]:
+            return query_table['locale']
+    return request.accept_languages.best_match(app.config["LANGUAGES"])
 
 
 @app.route('/')
-def index():
+def get_index() -> str:
+    """The home/index page.
     """
-    The main route that renders the home
-    page template with translated text.
-
-    Returns:
-        str: Rendered HTML template for the home page.
-    """
-    # Render the template with translated title and header using gettext
-    return render_template('4-index.html',
-                           title=gettext("home_title"),
-                           header=gettext("home_header"))
+    return render_template('4-index.html')
 
 
 if __name__ == '__main__':
-    # Run the application
-    app.run()
+    app.run(host='0.0.0.0', port=5000)
